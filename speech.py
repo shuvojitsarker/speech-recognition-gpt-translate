@@ -7,7 +7,7 @@ from googletrans import Translator
 # explicit function to take input commands 
 # and recognize them
 def takeCommandHindi():
-    openai.api_key = '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'
+    openai.api_key = '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'
     translator = Translator()
     while True:
         r = sr.Recognizer()
@@ -31,7 +31,10 @@ def takeCommandHindi():
 
                 if choice == "Assist":
                     #First translate from bengali to english language
+                    print("Translating...")
                     translated = translator.translate(Query, src='bn', dest='en')
+                    print(f"Translated query: {translated.text}")    
+                    print("Sending query for assistance...")
 
                     #If choice is assist then call OpenAI API to collect information
                     messages = [ {"role": "system", "content": "You are an intelligent assistant."} ]
@@ -45,6 +48,8 @@ def takeCommandHindi():
                         )
                     reply = chat.choices[0].message.content
 
+                    print(f"Reply: {reply}")
+                    print("Translating reply to source language...")
                     #Second translate reply from english to bengali language
                     translatedReply = translator.translate(reply, src='en', dest='bn')
 
