@@ -7,7 +7,7 @@ from googletrans import Translator
 # explicit function to take input commands 
 # and recognize them
 def takeCommandHindi():
-    openai.api_key = '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'
+    openai.api_key = 'OpenAI API Key'
     translator = Translator()
     while True:
         r = sr.Recognizer()
