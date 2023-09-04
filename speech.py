@@ -1,14 +1,14 @@
 # import required module
 import speech_recognition as sr
-import openai
-from googletrans import Translator
-
+import translate as translate
+import assist as assist
+import tts as tts
+import pygame
 
 # explicit function to take input commands 
 # and recognize them
 def takeCommandHindi():
-    openai.api_key = 'OpenAI API Key'
-    translator = Translator()
+    
     while True:
         r = sr.Recognizer()
         with sr.Microphone() as source:
@@ -30,35 +30,17 @@ def takeCommandHindi():
                 choice = input("Enter: ")
 
                 if choice == "Assist":
-                    #First translate from bengali to english language
-                    print("Translating...")
-                    translated = translator.translate(Query, src='bn', dest='en')
-                    print(f"Translated query: {translated.text}")    
-                    print("Sending query for assistance...")
-
-                    #If choice is assist then call OpenAI API to collect information
-                    messages = [ {"role": "system", "content": "You are an intelligent assistant."} ]
-                    message = translated.text
-                    if message:
-                        messages.append(
-                            {"role": "user", "content": message},
-                        )
-                        chat = openai.ChatCompletion.create(
-                            model="gpt-3.5-turbo", messages=messages
-                        )
-                    reply = chat.choices[0].message.content
-
-                    print(f"Reply: {reply}")
-                    print("Translating reply to source language...")
-                    #Second translate reply from english to bengali language
-                    translatedReply = translator.translate(reply, src='en', dest='bn')
-
-                    print(f"Assistance: {translatedReply.text}")
-                    messages.append({"role": "assistant", "content": translatedReply.text})
+                    assist.getAssisted(Query)
 
                 elif choice == "Translate":
-                    translated = translator.translate(Query, src='bn', dest='en')
-                    print(f'{translated.origin} -> {translated.text}')
+                    translatedQuery = translate.getTranslation(Query)
+                    print(f'{translatedQuery}')
+                    
+                    #Text to speech in source language
+                    pygame.init()
+                    pygame.mixer.init()
+                    tts.wait()
+                    tts.speak(Query)
 
             # handling the exception, so that assistant can 
             # ask for telling again the command
@@ -68,7 +50,7 @@ def takeCommandHindi():
                 return "None"
             #return Query
 
-# Driver Code
+
 
 # call the function
 takeCommandHindi()
