@@ -10,18 +10,24 @@ import pygame
 
 load_dotenv()
 
-def getAssisted(Query):
+def getAssisted(Query,sourceLang):
 
     #First translate from bengali to english language
     print("Translating...")
-    translatedQuery = translate.getTranslation(Query)
+    translatedQuery = translate.getTranslation(Query, sourceLang, os.getenv('ASSIST_LANG'))
     print(f"Translated query: {translatedQuery}")    
     print("Sending query for assistance...")
+
+    #Concat string to make sure response is in text format
+    translatedQuery = translatedQuery + ', in detailed text form, no shorthand'
 
     message = translatedQuery
 
     #Get reply from Bard
     reply = assistAIEngine(message)
+
+    #Replace * with blank
+    reply = reply.replace('*','')
     
     urlInText = play.Find(reply)
     
@@ -33,7 +39,7 @@ def getAssisted(Query):
 
         print("Translating reply to source language...")
         #Second translate reply from english to bengali language
-        translatedReply = translate.getTranslation(reply, 'en', 'bn')
+        translatedReply = translate.getTranslation(reply, os.getenv('ASSIST_LANG'), sourceLang)
 
         print(f"Assistance: {translatedReply}")
         # messages.append({"role": "assistant", "content": translatedReply})
@@ -41,7 +47,7 @@ def getAssisted(Query):
         #Text to speech
         pygame.init()
         pygame.mixer.init()
-        tts.speak(translatedReply)
+        tts.speak(translatedReply, sourceLang)
 
 
 
